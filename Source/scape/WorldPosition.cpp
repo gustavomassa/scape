@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "WorldPosition.h"
-
+#include "GameFramework/Actor.h"
 
 // Sets default values for this component's properties
 UWorldPosition::UWorldPosition()
@@ -14,22 +13,33 @@ UWorldPosition::UWorldPosition()
 	// ...
 }
 
-
 // Called when the game starts
 void UWorldPosition::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	/*
+	* Error - Red
+	* Warning - Yellow
+	* Display - Grey
+	*/
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay()"));
+
+	/* 	
+	FString LogMsg = TEXT("Hello");
+	FString *PtrLog = &LogMsg;
+	UE_LOG(LogTemp, Warning, TEXT("%s"), **PtrLog); 
+	*/
+
+	//FString ObjectName;
+	//GetOwner()->GetName(ObjectName);
+	UE_LOG(LogTemp, Warning, TEXT("%s %s"), *GetOwner()->GetName(), *GetOwner()->GetActorLocation().ToString());
 }
 
-
 // Called every frame
-void UWorldPosition::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UWorldPosition::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
 }
-
