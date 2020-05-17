@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{00042439-08D7-EBBD-4BC1-2B8E83FA3D25}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "scape",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	]
+}
