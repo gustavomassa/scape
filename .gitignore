@@ -82,5 +82,6 @@ Content/StarterContent/*
 
 VSCode Files
 /.vscode/*
+/.kdev4/*
 BuildingEscape.code-workspace
 
