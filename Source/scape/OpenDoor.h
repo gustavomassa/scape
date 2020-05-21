@@ -18,44 +18,42 @@ class SCAPE_API UOpenDoor : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UOpenDoor();
-
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	void OpenDoor(float DeltaTime);
 	void CloseDoor(float DeltaTime);
 
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
 private:
-	float InitialYaw;
-	float CurrentYaw;
-	float LastOpened;
-	float LastClosed;
+	float InitialYaw{0.0f};
+	float CurrentYaw{0.0f};
+	float LastOpened{0.0f};
+	float LastClosed{0.0f};
 
 	UPROPERTY(EditAnywhere)
-	float OpenAngle = 90.0f;
+	float OpenAngle{90.0f};
 
 	UPROPERTY(EditAnywhere)
-	float OpenSpeed = 1.5f;
+	float OpenSpeed{1.5f};
 
 	UPROPERTY(EditAnywhere)
-	float OpenDelay = 0.0f;
+	float OpenDelay{0.0f};
 
 	//UPROPERTY(EditAnywhere)
 	//float CloseAngle = 0.0f;
 
 	UPROPERTY(EditAnywhere)
-	float CloseSpeed = 1.5f;
+	float CloseSpeed{1.5f};
 
 	UPROPERTY(EditAnywhere)
-	float CloseDelay = 0.0f;
+	float CloseDelay{0.0f};
 
 	UPROPERTY(EditAnywhere)
-	ATriggerVolume *TriggerVolume;
+	ATriggerVolume *TriggerVolume{nullptr};
 
 	UPROPERTY(EditAnywhere)
-	AActor *TriggerActor;
+	AActor *TriggerActor{nullptr};
 };

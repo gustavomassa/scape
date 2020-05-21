@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 public class scapeEditorTarget : TargetRules
 {
-	public scapeEditorTarget( TargetInfo Target) : base(Target)
-	{
-		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
-		bForcePrecompiledHeaderForGameModules = true;
+    public scapeEditorTarget(TargetInfo Target) : base(Target)
+    {
+        Type = TargetType.Editor;
+        DefaultBuildSettings = BuildSettingsVersion.V2;
+        //bForcePrecompiledHeaderForGameModules = true;
 
-		ExtraModuleNames.AddRange( new string[] { "scape" } );
-	}
+        ExtraModuleNames.AddRange(new string[] { "scape" });
+    }
 }

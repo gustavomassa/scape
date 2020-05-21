@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "GrabberController.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -17,16 +18,38 @@ class SCAPE_API UGrabberController : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UGrabberController();
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
-
 private:
+	bool bGrabbed{false};
+	struct FPlayerViewPoint
+	{
+		FVector Location{FVector::ZeroVector};
+		FRotator Rotation{FRotator::ZeroRotator};
+		FVector LineTraceEnd{FVector::ZeroVector};
+	} PlayerViewPoint;
+
+	//Required components
+	UPhysicsHandleComponent *PhysicsHandle{nullptr};
+	UInputComponent *InputComponent{nullptr};
+
 	UPROPERTY(EditAnywhere)
-	float Reach = 50.0f;
+	float ReachDistance{60.0f};
+
+	UPROPERTY(EditAnywhere)
+	FName BindName{"Grab"};
+
+	void FindPhysicsHandle();
+	void FindInputComponent();
+	void RegisterBind();
+	void UpdatePlayerViewPoint();
+	bool IsPhysicsBodyInReach(FHitResult &out_HitResult, bool bDrawDebugLine, bool bDrawDebugLineOnHitOnly);
+	void UpdateGrabbedComponentLocation();
+	void Grab();
+	void Release();
 };
