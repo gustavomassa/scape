@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/TriggerVolume.h"
@@ -32,6 +33,7 @@ private:
 	float CurrentYaw{0.0f};
 	float LastOpened{0.0f};
 	float LastClosed{0.0f};
+	bool bAllowAnyOverlappingActors{false};
 
 	UPROPERTY(EditAnywhere)
 	float OpenAngle{90.0f};
@@ -55,5 +57,10 @@ private:
 	ATriggerVolume *TriggerVolume{nullptr};
 
 	UPROPERTY(EditAnywhere)
-	AActor *TriggerActor{nullptr};
+	float TriggerMass{0.0f};
+
+	UPROPERTY(EditAnywhere)
+	TArray<AActor *> TriggerActorList;
+
+	bool hasOverlappingActors(float &out_TotalMass) const;
 };

@@ -145,12 +145,14 @@ void UGrabberController::Release()
 	if (PhysicsHandle->GrabbedComponent)
 	{
 		PhysicsHandle->ReleaseComponent();
-
-		// Reset PlayerViewPoint
-		PlayerViewPoint.Location = FVector::ZeroVector;
-		PlayerViewPoint.Rotation = FRotator::ZeroRotator;
-		PlayerViewPoint.LineTraceEnd = FVector::ZeroVector;
-
+		ResetPlayerViewPoint();
 		UE_LOG(LogTemp, Warning, TEXT("Released object"));
 	}
+}
+
+void UGrabberController::ResetPlayerViewPoint()
+{
+	PlayerViewPoint.Location = FVector::ZeroVector;
+	PlayerViewPoint.Rotation = FRotator::ZeroRotator;
+	PlayerViewPoint.LineTraceEnd = FVector::ZeroVector;
 }

@@ -27,7 +27,14 @@ void UOpenDoor::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("%s: Trigger Volume is missing!"), *GetOwner()->GetName());
 	}
 
-	// Get the default actor based on the World top-down
+	// If TriggerActorList is not provided, allow any actor to trigger the volume
+	if (TriggerActorList.Num() == 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s: Trigger Actor List is empty, allowing any Actors as Triggers!"), *GetOwner()->GetName());
+		bAllowAnyOverlappingActors = true;
+	}
+
+	/* 	// Get the default actor based on the World top-down
 	auto DefaultPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	if (!ensure(DefaultPawn))
 	{
@@ -39,7 +46,7 @@ void UOpenDoor::BeginPlay()
 	{
 		TriggerActor = DefaultPawn;
 		UE_LOG(LogTemp, Warning, TEXT("%s: Using Default Pawn as Trigger Actor!"), *GetOwner()->GetName());
-	}
+	} */
 }
 
 // Called every frame
@@ -48,7 +55,9 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// TODO: Use Event Driven instead of Pooling
-	if (ensure(TriggerVolume) && ensure(TriggerActor) && TriggerVolume->IsOverlappingActor(TriggerActor))
+	float TotalMass{0.0f};
+	bool isOverlapping = hasOverlappingActors(TotalMass);
+	if (isOverlapping && TotalMass >= TriggerMass)
 	{
 		if ((GetWorld()->GetTimeSeconds() - LastClosed) >= OpenDelay)
 		{
@@ -66,15 +75,57 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	}
 }
 
+bool UOpenDoor::hasOverlappingActors(float &out_TotalMass) const
+{
+	//TODO: Implement Class Filter
+	TArray<AActor *> OverlapingActors;
+	TArray<AActor *> AllowedActors;
+	TriggerVolume->GetOverlappingActors(OverlapingActors);
+	if (OverlapingActors.Num() == 0)
+	{
+		out_TotalMass = 0.0f;
+		return false;
+	}
+
+	for (auto Actor : OverlapingActors)
+	{
+		bool bAllowedActor = TriggerActorList.Contains(Actor);
+		if (bAllowedActor)
+		{
+			AllowedActors.Add(Actor);
+		}
+		float ActorMass = Actor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
+
+		UE_LOG(LogTemp, Warning, TEXT("%s - Allowed: %s, is overlapping door trigger with mass: %f"), *Actor->GetName(), (bAllowedActor ? TEXT("True") : TEXT("False")), ActorMass);
+
+		if (bAllowAnyOverlappingActors || bAllowedActor)
+		{
+			// Sum mas
+			out_TotalMass += ActorMass;
+		}
+	}
+
+	// Even though the Trigger Mass to open the door could be 0, we need to check if we have at least one allowed actor to open it
+	if (!bAllowAnyOverlappingActors && AllowedActors.Num() == 0)
+	{
+		out_TotalMass = 0.0f;
+		return false;
+	}
+
+	return true;
+}
+
 void UOpenDoor::OpenDoor(float DeltaTime)
 {
+	if (CurrentYaw >= (OpenAngle - 0.1f))
+	{
+		// Dor is opening/opened
+		return;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("%s Opening Door"), *GetOwner()->GetName());
+
 	// Exponential Linear Interpolation for a smooth movement
 	CurrentYaw = FMath::FInterpTo(CurrentYaw, OpenAngle, DeltaTime, OpenSpeed);
-
-	if (CurrentYaw > 0.0f && CurrentYaw < (OpenAngle - 0.1f))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *GetOwner()->GetActorRotation().ToString());
-	}
 
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
@@ -83,13 +134,16 @@ void UOpenDoor::OpenDoor(float DeltaTime)
 
 void UOpenDoor::CloseDoor(float DeltaTime)
 {
+	if (CurrentYaw <= 0.1f)
+	{
+		// Door is closing/closed
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("%s Closing Door"), *GetOwner()->GetName());
+
 	// Exponential Linear Interpolation for a smooth movement
 	CurrentYaw = FMath::FInterpTo(CurrentYaw, InitialYaw, DeltaTime, CloseSpeed);
-
-	if (CurrentYaw < (InitialYaw - 0.1f))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *GetOwner()->GetActorRotation().ToString());
-	}
 
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;

@@ -20,6 +20,8 @@ public:
 	UGrabberController();
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	void Grab();
+	void Release();
 
 protected:
 	// Called when the game starts
@@ -39,7 +41,7 @@ private:
 	UInputComponent *InputComponent{nullptr};
 
 	UPROPERTY(EditAnywhere)
-	float ReachDistance{60.0f};
+	float ReachDistance{100.0f};
 
 	UPROPERTY(EditAnywhere)
 	FName BindName{"Grab"};
@@ -50,6 +52,5 @@ private:
 	void UpdatePlayerViewPoint();
 	bool IsPhysicsBodyInReach(FHitResult &out_HitResult, bool bDrawDebugLine, bool bDrawDebugLineOnHitOnly);
 	void UpdateGrabbedComponentLocation();
-	void Grab();
-	void Release();
+	void ResetPlayerViewPoint();
 };
