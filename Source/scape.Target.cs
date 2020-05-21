@@ -9,6 +9,7 @@ public class scapeTarget : TargetRules
     {
         Type = TargetType.Game;
         DefaultBuildSettings = BuildSettingsVersion.V2;
+        //bUsePCHFiles = false;
         //bForcePrecompiledHeaderForGameModules = true;
 
         ExtraModuleNames.AddRange(new string[] { "scape" });
