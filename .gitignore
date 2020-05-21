@@ -81,9 +81,8 @@ Content/StarterContent/*
 
 # Kdev Files
 /.kdev4/*
+scape.kdev4
 
 # VSCode Files
 /.vscode/*
 scape.code-workspace
-#*.code-workspace
-
