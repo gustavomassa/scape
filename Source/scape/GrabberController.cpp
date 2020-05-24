@@ -110,7 +110,7 @@ void UGrabberController::UpdateGrabbedComponentLocation()
 void UGrabberController::Grab()
 {
 	// Make sure we are not holding any object before trying to brab anything
-	if (!PhysicsHandle->GrabbedComponent)
+	if (!PhysicsHandle || !PhysicsHandle->GrabbedComponent)
 	{
 		FHitResult HitResult;
 		if (IsPhysicsBodyInReach(HitResult))
@@ -142,7 +142,7 @@ void UGrabberController::Release()
 		return;
 	}
 
-	if (PhysicsHandle->GrabbedComponent)
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
 	{
 		PhysicsHandle->ReleaseComponent();
 		ResetPlayerViewPoint();

@@ -37,7 +37,9 @@ private:
 	} PlayerViewPoint;
 
 	//Required components
+	UPROPERTY()
 	UPhysicsHandleComponent *PhysicsHandle{nullptr};
+	UPROPERTY()
 	UInputComponent *InputComponent{nullptr};
 
 	UPROPERTY(EditAnywhere)

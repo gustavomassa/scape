@@ -34,6 +34,8 @@ void UOpenDoor::BeginPlay()
 		bAllowAnyOverlappingActors = true;
 	}
 
+	FindAudioComponent();
+
 	/* 	// Get the default actor based on the World top-down
 	auto DefaultPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	if (!ensure(DefaultPawn))
@@ -75,8 +77,23 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	}
 }
 
+void UOpenDoor::FindAudioComponent()
+{
+	AudioComponent = GetOwner()->FindComponentByClass<UAudioComponent>();
+	if (!ensure(AudioComponent))
+	{
+		UE_LOG(LogTemp, Error, TEXT("%s: Failed to get Audio Component!"), *GetOwner()->GetName());
+	}
+}
+
 bool UOpenDoor::hasOverlappingActors(float &out_TotalMass) const
 {
+	if (!TriggerVolume)
+	{
+		out_TotalMass = 0.0f;
+		return false;
+	}
+
 	//TODO: Implement Class Filter
 	TArray<AActor *> OverlapingActors;
 	TArray<AActor *> AllowedActors;
@@ -130,6 +147,13 @@ void UOpenDoor::OpenDoor(float DeltaTime)
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
+
+	bCloseDoorSound = false;
+	if (!bOpenDoorSound)
+	{
+		PlaySound();
+		bOpenDoorSound = true;
+	}
 }
 
 void UOpenDoor::CloseDoor(float DeltaTime)
@@ -148,4 +172,17 @@ void UOpenDoor::CloseDoor(float DeltaTime)
 	FRotator DoorRotation = GetOwner()->GetActorRotation();
 	DoorRotation.Yaw = CurrentYaw;
 	GetOwner()->SetActorRotation(DoorRotation);
+
+	bOpenDoorSound = false;
+	if (!bCloseDoorSound)
+	{
+		PlaySound();
+		bCloseDoorSound = true;
+	}
+}
+
+void UOpenDoor::PlaySound()
+{
+	if (AudioComponent)
+		AudioComponent->Play();
 }
