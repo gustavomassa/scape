@@ -12,6 +12,9 @@
 #include "Engine/World.h"
 #include "OpenDoor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenDoor);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCloseDoor);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class SCAPE_API UOpenDoor : public UActorComponent
 {
@@ -24,6 +27,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	void OpenDoor(float DeltaTime);
 	void CloseDoor(float DeltaTime);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnOpenDoor OnOpenDoor;
+	UPROPERTY(BlueprintAssignable)
+	FOnCloseDoor OnCloseDoor;
 
 protected:
 	// Called when the game starts

@@ -134,7 +134,7 @@ bool UOpenDoor::hasOverlappingActors(float &out_TotalMass) const
 
 void UOpenDoor::OpenDoor(float DeltaTime)
 {
-	if (CurrentYaw >= (OpenAngle - 0.1f))
+	if (FMath::Abs(CurrentYaw) >= (FMath::Abs(OpenAngle) - 0.1f))
 	{
 		// Dor is opening/opened
 		return;
@@ -154,11 +154,13 @@ void UOpenDoor::OpenDoor(float DeltaTime)
 		PlaySound();
 		bOpenDoorSound = true;
 	}
+
+	OnOpenDoor.Broadcast();
 }
 
 void UOpenDoor::CloseDoor(float DeltaTime)
 {
-	if (CurrentYaw <= 0.1f)
+	if (FMath::Abs(CurrentYaw) <= 0.1f)
 	{
 		// Door is closing/closed
 		return;
@@ -179,6 +181,8 @@ void UOpenDoor::CloseDoor(float DeltaTime)
 		PlaySound();
 		bCloseDoorSound = true;
 	}
+
+	OnCloseDoor.Broadcast();
 }
 
 void UOpenDoor::PlaySound()
