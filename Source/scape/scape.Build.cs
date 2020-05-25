@@ -8,7 +8,7 @@ public class scape : ModuleRules
     {
         //CppStandard = CppStandardVersion.Cpp17;
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-        bUseUnity = false;
+        bUseUnity = true;
 
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
