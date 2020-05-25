@@ -54,10 +54,10 @@ void UGrabberController::RegisterBind()
 
 void UGrabberController::UpdatePlayerViewPoint()
 {
-	// Get The First Player View Point
+	// Get The First Player View Point and Calculate End Vector
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(PlayerViewPoint.Location, PlayerViewPoint.Rotation);
-	// Calculate Line Trace End based on the Location and Rotation
-	PlayerViewPoint.LineTraceEnd = PlayerViewPoint.Location + PlayerViewPoint.Rotation.Vector() * ReachDistance;
+	PlayerViewPoint.LineTraceEnd = ((GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetActorForwardVector() * ReachDistance) + PlayerViewPoint.Location);
+	//PlayerViewPoint.LineTraceEnd = PlayerViewPoint.Location + PlayerViewPoint.Rotation.Vector() * ReachDistance;
 }
 
 bool UGrabberController::IsPhysicsBodyInReach(FHitResult &out_HitResult, bool bDrawDebugLine = false, bool bDrawDebugLineOnHitOnly = false)
@@ -99,18 +99,17 @@ bool UGrabberController::IsPhysicsBodyInReach(FHitResult &out_HitResult, bool bD
 
 void UGrabberController::UpdateGrabbedComponentLocation()
 {
-	if (PhysicsHandle->GrabbedComponent)
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
 	{
-		// Update the location of the object that we are holding
 		UpdatePlayerViewPoint();
-		PhysicsHandle->SetTargetLocation(PlayerViewPoint.LineTraceEnd);
+		PhysicsHandle->SetTargetLocationAndRotation(PlayerViewPoint.LineTraceEnd, PlayerViewPoint.Rotation);
 	}
 }
 
 void UGrabberController::Grab()
 {
 	// Make sure we are not holding any object before trying to brab anything
-	if (!PhysicsHandle || !PhysicsHandle->GrabbedComponent)
+	if (PhysicsHandle && !PhysicsHandle->GrabbedComponent)
 	{
 		FHitResult HitResult;
 		if (IsPhysicsBodyInReach(HitResult))
